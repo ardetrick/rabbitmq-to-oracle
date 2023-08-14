@@ -1,0 +1,27 @@
+services:
+  rabbitmq:
+    image: 'rabbitmq:management'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=myuser'
+    ports:
+      - '5672'
+      - '15672:15672'
+  # Oracle doesn't work on M1 macs: https://github.com/oracle/docker-images/discussions/1951
+  oracle:
+    image: 'gvenzl/oracle-xe:21-slim-faststart'
+    # Provide passwords and other environment variables to container
+    environment:
+      ORACLE_RANDOM_PASSWORD: true
+      ORACLE_ALLOW_REMOTE: true
+      APP_USER: my_user
+      APP_PASSWORD: change_me_plz
+      APP_USER_PASSWORD: change_me_plz
+    ports:
+      - '1521'
+    healthcheck:
+      test: [ "CMD-SHELL", "healthcheck.sh" ]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 10m
